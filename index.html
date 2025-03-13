@@ -107,6 +107,9 @@
 
     <!-- 引入 axios 库 -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- 引入 SweetAlert2 库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
 </head>
 <body>
     <!-- 登录表单 -->
@@ -119,13 +122,14 @@
     <!-- 故障排查系统内容，初始隐藏 -->
     <div id="troubleshootingSystem" class="container" style="display: none;">
         <h1>故障排查系统</h1>
-        <p>请选择您遇到的手机故障类型：</p>
+        <p>请选择您遇到的问题类型：</p>
         <select id="problemType">
             <option value="powerOn">不开机问题</option>
             <option value="shortBattery">待机时间短</option>
             <option value="poorSignal">信号差</option>
             <option value="stillProblem">维修后仍旧有问题</option>
             <option value="shuaihuai">摔坏了</option>
+            <option value="blindModeExit">盲人模式退出问题</option>
         </select>
         <button onclick="startTroubleshooting()">开始排查</button>
         <div id="steps" style="display: none;">
@@ -136,6 +140,66 @@
         <div id="menu">
             <button onclick="goBackToInitialPage()">返回主菜单</button>
             <button onclick="logout()">退出登录</button>
+        </div>
+    </div>
+
+    <!-- 盲人模式退出引导，初始隐藏 -->
+    <div id="blindModeExitGuide" style="display: none;">
+        <!-- 复制盲人模式退出方法.html 的内容 -->
+        <div id="step1" class="step" style="display: none;">
+            <div class="step-content">
+                <div class="emoji">👆</div>
+                <h2>尝试通过侧边按键退出盲人模式</h2>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 25%"></div>
+                </div>
+                <button onclick="showConfirm(1)">我已连续点击侧边按键3次</button>
+            </div>
+        </div>
+
+        <div id="step2" class="step" style="display: none;">
+            <div class="step-content">
+                <div class="emoji">📱</div>
+                <h2>检查屏幕亮屏状态及响应</h2>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 50%"></div>
+                </div>
+                <button onclick="checkScreenLit()">我已点击开机键</button>
+            </div>
+        </div>
+
+        <div id="step3" class="step" style="display: none;">
+            <div class="step-content">
+                <div class="emoji">👂</div>
+                <h2>如果屏幕不亮请执行</h2>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 75%"></div>
+                </div>
+                <div id="promptCheck">
+                    <p class="warning">请持续点击开机键直到听到提示音（如报时或通知内容）</p>
+                    <button onclick="checkPromptSound()">我听到提示音了</button>
+                </div>
+                <div id="unlockGuide" style="display:none;">
+                    <p>请用三指连续敲击屏幕直至屏幕亮起</p>
+                    <button onclick="activateScreen()">屏幕已亮起</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="step4" class="step" style="display: none;">
+            <div class="step-content">
+                <div class="emoji">📞</div>
+                <h2>寻求技术支持</h2>
+                <div class="progress-bar">
+                    <div class="progress" style="width: 100%"></div>
+                </div>
+                <p>建议联系技术支持或专业人员获取帮助，联系方式：[具体联系方式]</p>
+                <button onclick="askRetry()">是否需要再次尝试上述步骤？</button>
+            </div>
+        </div>
+
+        <div id="resetDiv" style="display: none;">
+            <button onclick="resetProcess()">重新开始</button>
         </div>
     </div>
 
@@ -171,6 +235,7 @@
             document.getElementById('troubleshootingSystem').style.display = 'none';
             document.getElementById('steps').style.display = 'none';
             document.getElementById('menu').style.display = 'none';
+            document.getElementById('blindModeExitGuide').style.display = 'none';
             document.getElementById('password').value = ''; // 清空密码输入框
         }
 
@@ -180,51 +245,67 @@
 
         function startTroubleshooting() {
             const problemType = document.getElementById('problemType').value;
+            document.getElementById('steps').style.display = 'none';
+            document.getElementById('blindModeExitGuide').style.display = 'none';
+
             switch (problemType) {
                 case 'powerOn':
-                    problemSteps = [
+                case 'shortBattery':
+                case 'poorSignal':
+                case 'stillProblem':
+                case 'shuaihuai':
+                    problemSteps = getStepsForProblem(problemType);
+                    currentStep = 0;
+                    showStep();
+                    document.getElementById('steps').style.display = 'block';
+                    document.getElementById('troubleshootingSystem').querySelector('#menu').style.display = 'block';
+                    break;
+                case 'blindModeExit':
+                    document.getElementById('troubleshootingSystem').style.display = 'none';
+                    document.getElementById('blindModeExitGuide').style.display = 'block';
+                    currentStepBlindMode = 1; // 确保每次进入都从第一步开始
+                    showStepBlindMode();
+                    break;
+            }
+        }
+
+        function getStepsForProblem(problemType) {
+            switch (problemType) {
+                case 'powerOn':
+                    return [
                         '确认手机电池是否有电，建议您尝试充电一段时间后再尝试开机。',
                         '请按照您手机机型正确的强制重启步骤操作（不同品牌和型号的手机可能有所不同）。',
                         '请确保使用的充电设备是原装或认证的，并且工作正常。',
                         '如果以上步骤都无法解决问题，可能是系统问题，建议您尝试进入恢复模式进行系统修复或恢复出厂设置（注意提醒备份数据）。'
                     ];
-                    break;
                 case 'shortBattery':
-                    problemSteps = [
+                    return [
                         '请问您是否经常使用大量应用，尤其是那些在后台持续运行的应用程序？',
                         '请通过手机内置的电池健康功能查看电池状态，判断是否需要更换电池。',
                         '有时待机时间短可能是由于软件问题引起的，确保系统和应用程序都是最新版本。',
                         '建议您开启省电模式或者调整屏幕亮度、自动锁屏时间等设置来延长电池寿命。'
                     ];
-                    break;
                 case 'poorSignal':
-                    problemSteps = [
+                    return [
                         '请问您所在的位置是否有信号覆盖的问题，比如地下室、偏远山区等？',
                         '建议您开启并关闭飞行模式以重新搜索网络信号。',
                         '请检查SIM卡是否安装正确，必要时可尝试重新插拔或更换SIM卡。',
                         '若上述方法均无效，可能存在硬件问题，如天线损坏等，需进一步专业检测。'
                     ];
-                    break;
                 case 'stillProblem':
-                    problemSteps = [
+                    return [
                         '请详细描述之前维修的具体内容，包括更换了哪些部件以及进行了何种修理。',
                         '请根据您的描述重现问题，确认具体的表现形式。',
                         '如果客服无法解决，我们会及时将信息反馈给技术支持团队做深入分析。'
                     ];
-                    break;
                 case 'shuaihuai':
-                    problemSteps = [
+                    return [
                         '检查手机是否有明显的物理损伤，例如裂纹或凹陷。',
                         '尝试重启手机，有时候简单的重启可以解决问题。',
                         '如果手机进水或受潮，请立即关机并干燥处理，避免进一步损害。',
                         '如果以上步骤都无法解决问题，建议联系专业的维修服务。'
                     ];
-                    break;
             }
-            currentStep = 0;
-            showStep();
-            document.getElementById('steps').style.display = 'block';
-            document.getElementById('troubleshootingSystem').querySelector('#menu').style.display = 'block';
         }
 
         function showStep() {
@@ -246,6 +327,7 @@
             currentStep = 0;
             problemSteps = [];
             document.getElementById('steps').style.display = 'none';
+            document.getElementById('troubleshootingSystem').querySelector('#menu').style.display = 'none';
         }
 
         // 返回用户登录后的最初界面
@@ -260,11 +342,171 @@
                 login();
             }
         });
+
+        // 盲人模式退出引导相关函数
+        let currentStepBlindMode = 1;
+
+        async function showConfirm(branch) {
+            const { isConfirmed } = await Swal.fire({
+                title: '是否已退出盲人模式？',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '是',
+                cancelButtonText: '否'
+            });
+            if (isConfirmed) {
+                exitFlow();
+            } else {
+                // 修复分支跳转逻辑
+                switch(branch) {
+                    case 1:
+                        currentStepBlindMode = 2;
+                        break;
+                    case 2:
+                        currentStepBlindMode = 3;
+                        break;
+                    case 3:
+                        currentStepBlindMode = 4;
+                        break;
+                    default:
+                        currentStepBlindMode = 1;
+                }
+                showStepBlindMode();
+            }
+        }
+
+        async function checkScreenLit() {
+            const { isConfirmed } = await Swal.fire({
+                title: '屏幕是否亮起？',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '是',
+                cancelButtonText: '否'
+            });
+            if (isConfirmed) {
+                await Swal.fire({
+                    title: '请单指滑动进入解锁页面，输入密码时每个数字需要双击',
+                    icon: 'info'
+                });
+                const { isConfirmed: exited } = await Swal.fire({
+                    title: '是否已退出盲人模式？',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: '是',
+                    cancelButtonText: '否'
+                });
+                if (exited) {
+                    exitFlow();
+                } else {
+                    currentStepBlindMode = 1;
+                    showStepBlindMode();
+                }
+            } else {
+                currentStepBlindMode = 3;
+                showStepBlindMode();
+            }
+        }
+
+        function checkPromptSound() {
+            document.getElementById('promptCheck').style.display = 'none';
+            document.getElementById('unlockGuide').style.display = 'block';
+        }
+
+        async function activateScreen() {
+            await Swal.fire({
+                title: '屏幕已亮起，请单指滑动进入解锁页面，输入密码时每个数字需要双击',
+                icon: 'info'
+            });
+            const { isConfirmed: exited } = await Swal.fire({
+                title: '是否已退出盲人模式？',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '是',
+                cancelButtonText: '否'
+            });
+            if (exited) {
+                exitFlow();
+            } else {
+                // 修改为返回分支3，而不是直接跳转到分支4
+                currentStepBlindMode = 3;
+                showStepBlindMode();
+                // 重置分支3的状态
+                document.getElementById('promptCheck').style.display = 'block';
+                document.getElementById('unlockGuide').style.display = 'none';
+            }
+        }
+
+        async function askRetry() {
+            const { isConfirmed } = await Swal.fire({
+                title: '是否需要再次尝试上述步骤？',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '是',
+                cancelButtonText: '否'
+            });
+            if (isConfirmed) {
+                currentStepBlindMode = 1;
+                showStepBlindMode();
+            } else {
+                exitFlow();
+            }
+        }
+
+        // 在showStep函数中添加进度条更新
+        function showStepBlindMode(stepNumber) {
+            if (!stepNumber) {
+                stepNumber = currentStepBlindMode;
+            }
+            document.querySelectorAll('#blindModeExitGuide .step').forEach(div => {
+                div.style.display = 'none';
+            });
+            const step = document.getElementById(`step${stepNumber}`);
+            step.style.display = 'block';
+
+            // 更新进度条
+            const progress = step.querySelector('.progress');
+            progress.style.width = `${stepNumber * 25}%`;
+        }
+
+        function exitFlow() {
+            Swal.fire({
+                title: '操作完成！如问题仍未解决，请保持与技术支持的联系',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: '重新开始',
+                cancelButtonText: '回到主菜单'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    resetProcess();
+                } else {
+                    goBackToTroubleshooting();
+                }
+            });
+            document.querySelectorAll('#blindModeExitGuide .step').forEach(div => div.style.display = 'none');
+            document.getElementById('resetDiv').style.display = 'none';
+        }
+
+        function goBackToTroubleshooting() {
+            document.getElementById('blindModeExitGuide').style.display = 'none';
+            document.getElementById('troubleshootingSystem').style.display = 'block';
+        }
+
+        function resetProcess() {
+            currentStepBlindMode = 1;
+            // 隐藏所有步骤
+            document.querySelectorAll('#blindModeExitGuide .step').forEach(div => {
+                div.style.display = 'none';
+            });
+            // 显示第一步
+            const step1 = document.getElementById('step1');
+            step1.style.display = 'block';
+            // 重置分支3的状态
+            document.getElementById('promptCheck').style.display = 'block';
+            document.getElementById('unlockGuide').style.display = 'none';
+            // 隐藏重置按钮
+            document.getElementById('resetDiv').style.display = 'none';
+        }
     </script>
 </body>
-<!-- 在页面底部添加作者信息 -->
 <div style="position: fixed; bottom: 10px; right: 10px; color: #e0e0e0;">作者：康鹏飞</div>
 </html>
-
-
-
