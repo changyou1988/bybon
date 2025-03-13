@@ -94,6 +94,9 @@
             background-color: #e5543c;
         }
     </style>
+
+    <!-- 引入 axios 库 -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
@@ -129,7 +132,6 @@
             <option value="poorSignal">信号差</option>
             <option value="stillProblem">维修后仍旧有问题</option>
             <option value="shuaihuai">摔坏了</option>
-            <option value="jinshui">进水</option>
         </select>
         <button onclick="startTroubleshooting()">开始排查</button>
         <div id="steps" style="display: none;">
@@ -144,10 +146,57 @@
     </div>
 
     <script>
+        // GitHub Gist ID 和 Personal Access Token
+        const gistId = '7c4ae8cfa2bc6af90652beb862e5d08b/raw/ebcf58e130b88d64b11c4ac5dc327872e9c46747/password.json'; // 替换为你的 Gist ID
+        const accessToken = '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'; // 替换为你的 GitHub PAT
+
         // 初始密码
         const adminPassword = 'bybon123';
-        // 从 localStorage 获取用户密码，如果没有则使用默认值
-        let userPassword = localStorage.getItem('userPassword') || '1234';
+
+        // 获取用户密码
+        let userPassword = localStorage.getItem('userPassword');
+
+        // 加载用户密码
+        async function loadUserPassword() {
+            try {
+                const response = await axios.get(`https://api.github.com/gists/${gistId}`);
+                const passwordData = JSON.parse(response.data.files['password.json'].content);
+                if (passwordData.password) {
+                    userPassword = passwordData.password;
+                    localStorage.setItem('userPassword', userPassword);
+                } else {
+                    userPassword = '1234';
+                    localStorage.setItem('userPassword', userPassword);
+                    saveUserPassword(userPassword);
+                }
+            } catch (error) {
+                console.error("Error loading user password:", error);
+            }
+        }
+
+        // 保存用户密码
+        async function saveUserPassword(password) {
+            try {
+                const response = await axios.patch(
+                    `https://api.github.com/gists/${gistId}`,
+                    {
+                        files: {
+                            'password.json': {
+                                content: JSON.stringify({ password })
+                            }
+                        }
+                    },
+                    {
+                        headers: {
+                            Authorization: `token ${accessToken}`
+                        }
+                    }
+                );
+                console.log("User password saved successfully.");
+            } catch (error) {
+                console.error("Error saving user password:", error);
+            }
+        }
 
         // 登录函数
         function login() {
@@ -168,9 +217,15 @@
         // 更改密码函数
         function changePassword() {
             const newPassword = document.getElementById('newPassword').value;
+            if (newPassword.trim() === '') {
+                alert('请输入有效的密码。');
+                return;
+            }
             userPassword = newPassword;
-            // 将新密码存储到 localStorage
+            // 更新本地存储
             localStorage.setItem('userPassword', newPassword);
+            // 更新 GitHub Gist
+            saveUserPassword(newPassword);
             alert('用户密码已更改。');
             document.getElementById('changePasswordForm').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
@@ -221,13 +276,6 @@
                         '3。'
                     ];
                     break;
-                case 'jinshui':
-                    problemSteps = [
-                        '5',
-                        '6',
-                        '7'
-                    ];
-                    break;
             }
             currentStep = 0;
             showStep();
@@ -275,8 +323,16 @@
             document.getElementById('troubleshootingSystem').style.display = 'none';
             document.getElementById('loginForm').style.display = 'block';
         }
+
+        // 加载页面时加载用户密码
+        window.onload = () => {
+            loadUserPassword();
+        };
     </script>
 </body>
 <!-- 在页面底部添加作者信息 -->
 <div style="position: fixed; bottom: 10px; right: 10px; color: #e0e0e0;">作者：康鹏飞</div>
 </html>
+
+
+
