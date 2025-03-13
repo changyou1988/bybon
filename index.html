@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="zh">
-    
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -109,7 +108,6 @@
     <!-- 引入 axios 库 -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
-
 <body>
     <!-- 登录表单 -->
     <div id="loginForm" class="container">
@@ -144,6 +142,16 @@
     <script>
         // 硬编码的密码
         const hardcodedPassword = '9999'; // 初始密码设置为 9999
+
+        // 清除所有存储的数据
+        function clearStorage() {
+            localStorage.clear();
+        }
+
+        // 检查并清除之前存储的数据
+        window.onload = function() {
+            clearStorage();
+        };
 
         // 登录函数
         function login() {
