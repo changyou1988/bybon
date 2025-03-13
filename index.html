@@ -129,6 +129,7 @@
             <option value="poorSignal">信号差</option>
             <option value="stillProblem">维修后仍旧有问题</option>
             <option value="shuaihuai">摔坏了</option>
+            <option value="jinshui">进水</option>
         </select>
         <button onclick="startTroubleshooting()">开始排查</button>
         <div id="steps" style="display: none;">
@@ -218,6 +219,13 @@
                         '1。',
                         '2。',
                         '3。'
+                    ];
+                    break;
+                case 'jinshui':
+                    problemSteps = [
+                        '5',
+                        '6',
+                        '7'
                     ];
                     break;
             }
