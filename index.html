@@ -204,24 +204,20 @@
     </div>
 
     <script>
-        // 硬编码的密码
-        const hardcodedPassword = '8888'; // 初始密码设置为 8888
+        // 硬编码的密码，只能在源代码里修改
+        const HARDCODED_PASSWORD = '8888';
 
-        // 清除所有存储的数据
-        function clearStorage() {
-            localStorage.clear();
-        }
-
-        // 检查并清除之前存储的数据
+        // 页面加载时清理历史记录
         window.onload = function() {
-            clearStorage();
+            localStorage.clear();
+            sessionStorage.clear();
+            document.getElementById('password').value = '';
         };
 
         // 登录函数
         function login() {
             const password = document.getElementById('password').value;
-
-            if (password === hardcodedPassword) {
+            if (password === HARDCODED_PASSWORD) {
                 document.getElementById('loginForm').style.display = 'none';
                 document.getElementById('troubleshootingSystem').style.display = 'block';
             } else {
@@ -270,42 +266,38 @@
         }
 
         function getStepsForProblem(problemType) {
-            switch (problemType) {
-                case 'powerOn':
-                    return [
-                        '确认手机电池是否有电，建议您尝试充电一段时间后再尝试开机。',
-                        '请按照您手机机型正确的强制重启步骤操作（不同品牌和型号的手机可能有所不同）。',
-                        '请确保使用的充电设备是原装或认证的，并且工作正常。',
-                        '如果以上步骤都无法解决问题，可能是系统问题，建议您尝试进入恢复模式进行系统修复或恢复出厂设置（注意提醒备份数据）。'
-                    ];
-                case 'shortBattery':
-                    return [
-                        '请问您是否经常使用大量应用，尤其是那些在后台持续运行的应用程序？',
-                        '请通过手机内置的电池健康功能查看电池状态，判断是否需要更换电池。',
-                        '有时待机时间短可能是由于软件问题引起的，确保系统和应用程序都是最新版本。',
-                        '建议您开启省电模式或者调整屏幕亮度、自动锁屏时间等设置来延长电池寿命。'
-                    ];
-                case 'poorSignal':
-                    return [
-                        '请问您所在的位置是否有信号覆盖的问题，比如地下室、偏远山区等？',
-                        '建议您开启并关闭飞行模式以重新搜索网络信号。',
-                        '请检查SIM卡是否安装正确，必要时可尝试重新插拔或更换SIM卡。',
-                        '若上述方法均无效，可能存在硬件问题，如天线损坏等，需进一步专业检测。'
-                    ];
-                case 'stillProblem':
-                    return [
-                        '请详细描述之前维修的具体内容，包括更换了哪些部件以及进行了何种修理。',
-                        '请根据您的描述重现问题，确认具体的表现形式。',
-                        '如果客服无法解决，我们会及时将信息反馈给技术支持团队做深入分析。'
-                    ];
-                case 'shuaihuai':
-                    return [
-                        '检查手机是否有明显的物理损伤，例如裂纹或凹陷。',
-                        '尝试重启手机，有时候简单的重启可以解决问题。',
-                        '如果手机进水或受潮，请立即关机并干燥处理，避免进一步损害。',
-                        '如果以上步骤都无法解决问题，建议联系专业的维修服务。'
-                    ];
-            }
+            const STEPS = {
+                powerOn: [
+                    '确认手机电池是否有电，建议您尝试充电一段时间后再尝试开机。',
+                    '请按照您手机机型正确的强制重启步骤操作（不同品牌和型号的手机可能有所不同）。',
+                    '请确保使用的充电设备是原装或认证的，并且工作正常。',
+                    '如果以上步骤都无法解决问题，可能是系统问题，建议您尝试进入恢复模式进行系统修复或恢复出厂设置（注意提醒备份数据）。'
+                ],
+                shortBattery: [
+                    '请问您是否经常使用大量应用，尤其是那些在后台持续运行的应用程序？',
+                    '请通过手机内置的电池健康功能查看电池状态，判断是否需要更换电池。',
+                    '有时待机时间短可能是由于软件问题引起的，确保系统和应用程序都是最新版本。',
+                    '建议您开启省电模式或者调整屏幕亮度、自动锁屏时间等设置来延长电池寿命。'
+                ],
+                poorSignal: [
+                    '请问您所在的位置是否有信号覆盖的问题，比如地下室、偏远山区等？',
+                    '建议您开启并关闭飞行模式以重新搜索网络信号。',
+                    '请检查SIM卡是否安装正确，必要时可尝试重新插拔或更换SIM卡。',
+                    '若上述方法均无效，可能存在硬件问题，如天线损坏等，需进一步专业检测。'
+                ],
+                stillProblem: [
+                    '请详细描述之前维修的具体内容，包括更换了哪些部件以及进行了何种修理。',
+                    '请根据您的描述重现问题，确认具体的表现形式。',
+                    '如果客服无法解决，我们会及时将信息反馈给技术支持团队做深入分析。'
+                ],
+                shuaihuai: [
+                    '检查手机是否有明显的物理损伤，例如裂纹或凹陷。',
+                    '尝试重启手机，有时候简单的重启可以解决问题。',
+                    '如果手机进水或受潮，请立即关机并干燥处理，避免进一步损害。',
+                    '如果以上步骤都无法解决问题，建议联系专业的维修服务。'
+                ]
+            };
+            return STEPS[problemType];
         }
 
         function showStep() {
@@ -326,14 +318,14 @@
         function restartTroubleshooting() {
             currentStep = 0;
             problemSteps = [];
-            document.getElementById('steps').style.display = 'none';
-            document.getElementById('troubleshootingSystem').querySelector('#menu').style.display = 'none';
+            hideElement('steps');
+            hideElement('menu');
         }
 
         // 返回用户登录后的最初界面
         function goBackToInitialPage() {
-            document.getElementById('steps').style.display = 'none';
-            document.getElementById('troubleshootingSystem').querySelector('#menu').style.display = 'none';
+            hideElement('steps');
+            hideElement('menu');
         }
 
         // 支持使用 Enter 键登录
@@ -357,20 +349,7 @@
             if (isConfirmed) {
                 exitFlow();
             } else {
-                // 修复分支跳转逻辑
-                switch(branch) {
-                    case 1:
-                        currentStepBlindMode = 2;
-                        break;
-                    case 2:
-                        currentStepBlindMode = 3;
-                        break;
-                    case 3:
-                        currentStepBlindMode = 4;
-                        break;
-                    default:
-                        currentStepBlindMode = 1;
-                }
+                currentStepBlindMode = getNextStep(branch);
                 showStepBlindMode();
             }
         }
@@ -408,8 +387,8 @@
         }
 
         function checkPromptSound() {
-            document.getElementById('promptCheck').style.display = 'none';
-            document.getElementById('unlockGuide').style.display = 'block';
+            hideElement('promptCheck');
+            showElement('unlockGuide');
         }
 
         async function activateScreen() {
@@ -427,12 +406,10 @@
             if (exited) {
                 exitFlow();
             } else {
-                // 修改为返回分支3，而不是直接跳转到分支4
                 currentStepBlindMode = 3;
                 showStepBlindMode();
-                // 重置分支3的状态
-                document.getElementById('promptCheck').style.display = 'block';
-                document.getElementById('unlockGuide').style.display = 'none';
+                showElement('promptCheck');
+                hideElement('unlockGuide');
             }
         }
 
@@ -457,11 +434,10 @@
             if (!stepNumber) {
                 stepNumber = currentStepBlindMode;
             }
-            document.querySelectorAll('#blindModeExitGuide .step').forEach(div => {
-                div.style.display = 'none';
-            });
+            const steps = document.querySelectorAll('#blindModeExitGuide .step');
+            hideElements(steps);
             const step = document.getElementById(`step${stepNumber}`);
-            step.style.display = 'block';
+            showElement(step);
 
             // 更新进度条
             const progress = step.querySelector('.progress');
@@ -482,29 +458,61 @@
                     goBackToTroubleshooting();
                 }
             });
-            document.querySelectorAll('#blindModeExitGuide .step').forEach(div => div.style.display = 'none');
-            document.getElementById('resetDiv').style.display = 'none';
+            const steps = document.querySelectorAll('#blindModeExitGuide .step');
+            hideElements(steps);
+            hideElement('resetDiv');
         }
 
         function goBackToTroubleshooting() {
-            document.getElementById('blindModeExitGuide').style.display = 'none';
-            document.getElementById('troubleshootingSystem').style.display = 'block';
+            hideElement('blindModeExitGuide');
+            showElement('troubleshootingSystem');
         }
 
         function resetProcess() {
             currentStepBlindMode = 1;
-            // 隐藏所有步骤
-            document.querySelectorAll('#blindModeExitGuide .step').forEach(div => {
-                div.style.display = 'none';
+            const steps = document.querySelectorAll('#blindModeExitGuide .step');
+            hideElements(steps);
+            showElement('step1');
+            showElement('promptCheck');
+            hideElement('unlockGuide');
+            hideElement('resetDiv');
+        }
+
+        // 辅助函数：隐藏元素
+        function hideElement(elementIdOrElement) {
+            const element = typeof elementIdOrElement === 'string' ? document.getElementById(elementIdOrElement) : elementIdOrElement;
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        // 辅助函数：显示元素
+        function showElement(elementIdOrElement) {
+            const element = typeof elementIdOrElement === 'string' ? document.getElementById(elementIdOrElement) : elementIdOrElement;
+            if (element) {
+                element.style.display = 'block';
+            }
+        }
+
+        // 辅助函数：隐藏多个元素
+        function hideElements(elements) {
+            elements.forEach(element => {
+                element.style.display = 'none';
             });
-            // 显示第一步
-            const step1 = document.getElementById('step1');
-            step1.style.display = 'block';
-            // 重置分支3的状态
-            document.getElementById('promptCheck').style.display = 'block';
-            document.getElementById('unlockGuide').style.display = 'none';
-            // 隐藏重置按钮
-            document.getElementById('resetDiv').style.display = 'none';
+        }
+
+        // 辅助函数：获取下一步步骤
+        function getNextStep(branch) {
+            switch(branch) {
+                case 1:
+                    return 2;
+                case 2:
+                    return 3;
+                case 3:
+                    return 4;
+                default:
+                    return 1;
+            }
         }
     </script>
 </body>
