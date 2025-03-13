@@ -147,30 +147,37 @@
 
     <script>
         // GitHub Gist ID 和 Personal Access Token
-        const gistId = '7c4ae8cfa2bc6af90652beb862e5d08b'; // 替换为你的 Gist ID
-        const accessToken = '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'; // 替换为你的 GitHub PAT
+        const gistId = 'YOUR_GIST_ID'; // 替换为你的 Gist ID
+        const accessToken = 'YOUR_PERSONAL_ACCESS_TOKEN'; // 替换为你的 GitHub PAT
 
         // 初始密码
         const adminPassword = 'bybon123';
 
         // 获取用户密码
-        let userPassword = localStorage.getItem('userPassword');
+        let userPassword;
 
         // 加载用户密码
         async function loadUserPassword() {
             try {
-                const response = await axios.get(`https://api.github.com/gists/${gistId}`);
+                const response = await axios.get(`https://api.github.com/gists/${gistId}`, {
+                    headers: {
+                        'Cache-Control': 'no-cache',
+                        'Pragma': 'no-cache',
+                        'Expires': '0'
+                    }
+                });
                 const passwordData = JSON.parse(response.data.files['password.json'].content);
                 if (passwordData.password) {
                     userPassword = passwordData.password;
-                    localStorage.setItem('userPassword', userPassword);
+                    console.log("Loaded password from Gist:", userPassword);
                 } else {
                     userPassword = '1234';
-                    localStorage.setItem('userPassword', userPassword);
+                    console.log("No password found in Gist, using default password:", userPassword);
                     saveUserPassword(userPassword);
                 }
             } catch (error) {
                 console.error("Error loading user password:", error);
+                alert("无法加载用户密码，请稍后再试。");
             }
         }
 
@@ -193,8 +200,10 @@
                     }
                 );
                 console.log("User password saved successfully.");
+                userPassword = password; // Update local variable after successful save
             } catch (error) {
                 console.error("Error saving user password:", error);
+                alert("无法保存用户密码，请稍后再试。");
             }
         }
 
@@ -221,14 +230,8 @@
                 alert('请输入有效的密码。');
                 return;
             }
-            userPassword = newPassword;
-            // 更新本地存储
-            localStorage.setItem('userPassword', newPassword);
             // 更新 GitHub Gist
             saveUserPassword(newPassword);
-            alert('用户密码已更改。');
-            document.getElementById('changePasswordForm').style.display = 'none';
-            document.getElementById('loginForm').style.display = 'block';
         }
 
         // 原有故障排查系统的代码
