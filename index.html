@@ -146,10 +146,6 @@
     </div>
 
     <script>
-        // GitHub Gist ID 和 Personal Access Token
-        const gistId = 'YOUR_GIST_ID'; // 替换为你的 Gist ID
-        const accessToken = 'YOUR_PERSONAL_ACCESS_TOKEN'; // 替换为你的 GitHub PAT
-
         // 初始密码
         const adminPassword = 'bybon123';
 
@@ -159,51 +155,26 @@
         // 加载用户密码
         async function loadUserPassword() {
             try {
-                const response = await axios.get(`https://api.github.com/gists/${gistId}`, {
-                    headers: {
-                        'Cache-Control': 'no-cache',
-                        'Pragma': 'no-cache',
-                        'Expires': '0'
-                    }
-                });
-                const passwordData = JSON.parse(response.data.files['password.json'].content);
-                if (passwordData.password) {
-                    userPassword = passwordData.password;
-                    console.log("Loaded password from Gist:", userPassword);
-                } else {
-                    userPassword = '1234';
-                    console.log("No password found in Gist, using default password:", userPassword);
-                    saveUserPassword(userPassword);
-                }
+                const response = await axios.get('http://localhost:5000/api/password');
+                userPassword = response.data.password;
+                console.log("Loaded password from Gist:", userPassword);
             } catch (error) {
                 console.error("Error loading user password:", error);
-                alert("无法加载用户密码，请稍后再试。");
+                alert(error.response ? error.response.data.error : "无法加载用户密码，请稍后再试。");
             }
         }
 
         // 保存用户密码
         async function saveUserPassword(password) {
             try {
-                const response = await axios.patch(
-                    `https://api.github.com/gists/${gistId}`,
-                    {
-                        files: {
-                            'password.json': {
-                                content: JSON.stringify({ password })
-                            }
-                        }
-                    },
-                    {
-                        headers: {
-                            Authorization: `token ${accessToken}`
-                        }
-                    }
-                );
-                console.log("User password saved successfully.");
-                userPassword = password; // Update local variable after successful save
+                const response = await axios.post('http://localhost:5000/api/password', { password });
+                console.log(response.data.message);
+                alert(response.data.message);
+                document.getElementById('changePasswordForm').style.display = 'none';
+                document.getElementById('loginForm').style.display = 'block';
             } catch (error) {
                 console.error("Error saving user password:", error);
-                alert("无法保存用户密码，请稍后再试。");
+                alert(error.response ? error.response.data.error : "无法保存用户密码，请稍后再试。");
             }
         }
 
