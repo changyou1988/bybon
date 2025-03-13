@@ -339,50 +339,72 @@
         let currentStepBlindMode = 1;
 
         async function showConfirm(branch) {
-            const { isConfirmed } = await Swal.fire({
-                title: '是否已退出盲人模式？',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: '是',
-                cancelButtonText: '否'
-            });
-            if (isConfirmed) {
-                exitFlow();
-            } else {
-                currentStepBlindMode = getNextStep(branch);
-                showStepBlindMode();
-            }
-        }
-
-        async function checkScreenLit() {
-            const { isConfirmed } = await Swal.fire({
-                title: '屏幕是否亮起？',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: '是',
-                cancelButtonText: '否'
-            });
-            if (isConfirmed) {
-                await Swal.fire({
-                    title: '请单指滑动进入解锁页面，输入密码时每个数字需要双击',
-                    icon: 'info'
-                });
-                const { isConfirmed: exited } = await Swal.fire({
+            try {
+                const { isConfirmed } = await Swal.fire({
                     title: '是否已退出盲人模式？',
                     icon: 'question',
                     showCancelButton: true,
                     confirmButtonText: '是',
-                    cancelButtonText: '否'
+                    cancelButtonText: '否',
+                    width: 600, // 调整弹窗宽度
+                    padding: '3em', // 调整内边距
+                    allowOutsideClick: false // 禁止点击外部关闭弹窗
                 });
-                if (exited) {
+                if (isConfirmed) {
                     exitFlow();
                 } else {
-                    currentStepBlindMode = 1;
+                    currentStepBlindMode = getNextStep(branch);
                     showStepBlindMode();
                 }
-            } else {
-                currentStepBlindMode = 3;
-                showStepBlindMode();
+            } catch (error) {
+                console.error('SweetAlert2 出现错误:', error);
+                alert('出现错误，请稍后重试。');
+            }
+        }
+
+        async function checkScreenLit() {
+            try {
+                const { isConfirmed } = await Swal.fire({
+                    title: '屏幕是否亮起？',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: '是',
+                    cancelButtonText: '否',
+                    width: 600,
+                    padding: '3em',
+                    allowOutsideClick: false
+                });
+                if (isConfirmed) {
+                    await Swal.fire({
+                        title: '请单指滑动进入解锁页面，输入密码时每个数字需要双击',
+                        icon: 'info',
+                        width: 600,
+                        padding: '3em',
+                        allowOutsideClick: false
+                    });
+                    const { isConfirmed: exited } = await Swal.fire({
+                        title: '是否已退出盲人模式？',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonText: '是',
+                        cancelButtonText: '否',
+                        width: 600,
+                        padding: '3em',
+                        allowOutsideClick: false
+                    });
+                    if (exited) {
+                        exitFlow();
+                    } else {
+                        currentStepBlindMode = 1;
+                        showStepBlindMode();
+                    }
+                } else {
+                    currentStepBlindMode = 3;
+                    showStepBlindMode();
+                }
+            } catch (error) {
+                console.error('SweetAlert2 出现错误:', error);
+                alert('出现错误，请稍后重试。');
             }
         }
 
@@ -392,40 +414,59 @@
         }
 
         async function activateScreen() {
-            await Swal.fire({
-                title: '屏幕已亮起，请单指滑动进入解锁页面，输入密码时每个数字需要双击',
-                icon: 'info'
-            });
-            const { isConfirmed: exited } = await Swal.fire({
-                title: '是否已退出盲人模式？',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: '是',
-                cancelButtonText: '否'
-            });
-            if (exited) {
-                exitFlow();
-            } else {
-                currentStepBlindMode = 3;
-                showStepBlindMode();
-                showElement('promptCheck');
-                hideElement('unlockGuide');
+            try {
+                await Swal.fire({
+                    title: '屏幕已亮起，请单指滑动进入解锁页面，输入密码时每个数字需要双击',
+                    icon: 'info',
+                    width: 600,
+                    padding: '3em',
+                    allowOutsideClick: false
+                });
+                const { isConfirmed: exited } = await Swal.fire({
+                    title: '是否已退出盲人模式？',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: '是',
+                    cancelButtonText: '否',
+                    width: 600,
+                    padding: '3em',
+                    allowOutsideClick: false
+                });
+                if (exited) {
+                    exitFlow();
+                } else {
+                    currentStepBlindMode = 3;
+                    showStepBlindMode();
+                    showElement('promptCheck');
+                    hideElement('unlockGuide');
+                }
+            } catch (error) {
+                console.error('SweetAlert2 出现错误:', error);
+                alert('出现错误，请稍后重试。');
             }
         }
 
         async function askRetry() {
-            const { isConfirmed } = await Swal.fire({
-                title: '是否需要再次尝试上述步骤？',
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: '是',
-                cancelButtonText: '否'
-            });
-            if (isConfirmed) {
-                currentStepBlindMode = 1;
-                showStepBlindMode();
-            } else {
-                exitFlow();
+            try {
+                const { isConfirmed } = await Swal.fire({
+                    title: '是否需要再次尝试上述步骤？',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: '是',
+                    cancelButtonText: '否',
+                    width: 600,
+                    padding: '3em',
+                    allowOutsideClick: false
+                });
+                if (isConfirmed) {
+                    currentStepBlindMode = 1;
+                    showStepBlindMode();
+                } else {
+                    exitFlow();
+                }
+            } catch (error) {
+                console.error('SweetAlert2 出现错误:', error);
+                alert('出现错误，请稍后重试。');
             }
         }
 
@@ -445,22 +486,30 @@
         }
 
         function exitFlow() {
-            Swal.fire({
-                title: '操作完成！如问题仍未解决，请保持与技术支持的联系',
-                icon: 'success',
-                showCancelButton: true,
-                confirmButtonText: '重新开始',
-                cancelButtonText: '回到主菜单'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    resetProcess();
-                } else {
-                    goBackToTroubleshooting();
-                }
-            });
-            const steps = document.querySelectorAll('#blindModeExitGuide .step');
-            hideElements(steps);
-            hideElement('resetDiv');
+            try {
+                Swal.fire({
+                    title: '操作完成！如问题仍未解决，请保持与技术支持的联系',
+                    icon: 'success',
+                    showCancelButton: true,
+                    confirmButtonText: '重新开始',
+                    cancelButtonText: '回到主菜单',
+                    width: 600,
+                    padding: '3em',
+                    allowOutsideClick: false
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        resetProcess();
+                    } else {
+                        goBackToTroubleshooting();
+                    }
+                });
+                const steps = document.querySelectorAll('#blindModeExitGuide .step');
+                hideElements(steps);
+                hideElement('resetDiv');
+            } catch (error) {
+                console.error('SweetAlert2 出现错误:', error);
+                alert('出现错误，请稍后重试。');
+            }
         }
 
         function goBackToTroubleshooting() {
