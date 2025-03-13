@@ -37,7 +37,6 @@
             text-align: left;
         }
 
-        select,
         input[type="password"] {
             width: 100%;
             padding: 10px;
@@ -100,8 +99,15 @@
 </head>
 
 <body>
-    <!-- 故障排查系统内容 -->
-    <div id="troubleshootingSystem" class="container">
+    <!-- 登录表单 -->
+    <div id="loginForm" class="container">
+        <h1>故障排查系统</h1>
+        <label for="password">密码:</label>
+        <input type="password" id="password">
+        <button onclick="login()">登录</button>
+    </div>
+    <!-- 故障排查系统内容，初始隐藏 -->
+    <div id="troubleshootingSystem" class="container" style="display: none;">
         <h1>故障排查系统</h1>
         <p>请选择您遇到的手机故障类型：</p>
         <select id="problemType">
@@ -123,6 +129,21 @@
     </div>
 
     <script>
+        // 硬编码的密码
+        const hardcodedPassword = '1234'; // 初始密码设置为 1234
+
+        // 登录函数
+        function login() {
+            const password = document.getElementById('password').value;
+
+            if (password === hardcodedPassword) {
+                document.getElementById('loginForm').style.display = 'none';
+                document.getElementById('troubleshootingSystem').style.display = 'block';
+            } else {
+                alert('密码错误，请重试。');
+            }
+        }
+
         // 初始步骤数组
         let currentStep = 0;
         let problemSteps = [];
@@ -203,10 +224,10 @@
             document.getElementById('troubleshootingSystem').querySelector('#menu').style.display = 'none';
         }
 
-        // 支持使用 Enter 键开始排查
-        document.getElementById('problemType').addEventListener('keydown', function (event) {
+        // 支持使用 Enter 键登录
+        document.getElementById('password').addEventListener('keydown', function (event) {
             if (event.key === 'Enter') {
-                startTroubleshooting();
+                login();
             }
         });
     </script>
