@@ -1,282 +1,287 @@
 <!DOCTYPE html>
 <html lang="zh">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> 故障排查系统 </title>
+    <meta charset="UTF-8"> <!-- 设置文档字符编码为UTF-8 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- 设置视口，使页面适应不同设备 -->
+    <title>故障排查系统</title> <!-- 设置页面标题 -->
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
+            font-family: 'Roboto', sans-serif; /* 设置全局字体 */
+            background-color: #1a1a1a; /* 设置背景颜色 */
+            color: #ffffff; /* 设置文本颜色 */
+            display: flex; /* 使用弹性盒子布局 */
+            justify-content: center; /* 水平居中对齐 */
+            align-items: center; /* 垂直居中对齐 */
+            min-height: 100vh; /* 设置最小高度为视口高度的100% */
+            margin: 0; /* 移除默认外边距 */
         }
 
         .container {
-            background-color: #1e1e1e;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            width: 400px; /* 增加容器宽度 */
-            text-align: center;
+            background-color: #2c3e50; /* 设置容器背景颜色 */
+            padding: 30px; /* 设置内边距 */
+            border-radius: 15px; /* 设置圆角 */
+            width: 400px; /* 设置宽度 */
+            text-align: center; /* 文本居中对齐 */
         }
 
         h1 {
-            color: #00bfff;
-            margin-bottom: 20px;
+            color: #ecf0f1; /* 设置标题颜色 */
+            margin-bottom: 20px; /* 设置底部外边距 */
         }
 
         label {
-            display: block;
-            margin-bottom: 5px;
-            text-align: left;
+            display: block; /* 显示为块级元素 */
+            margin-bottom: 5px; /* 设置底部外边距 */
+            text-align: left; /* 文本左对齐 */
+            color: #bdc3c7; /* 设置标签颜色 */
         }
 
-        input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #2b2b2b;
-            color: #e0e0e0;
+        input[type="password"], select {
+            width: 100%; /* 宽度占满父容器 */
+            padding: 10px; /* 设置内边距 */
+            margin-bottom: 20px; /* 设置底部外边距 */
+            border: none; /* 移除边框 */
+            border-radius: 5px; /* 设置圆角 */
+            background-color: #34495e; /* 设置背景颜色 */
+            color: #ecf0f1; /* 设置文本颜色 */
+            font-size: 16px; /* 设置字体大小 */
+            transition: background-color 0.3s ease; /* 添加过渡效果 */
         }
 
-        select {
-            width: 100%; /* 设置下拉菜单宽度为100% */
-            padding: 10px;
-            margin-bottom: 20px;
-            border: none;
-            border-radius: 5px;
-            background-color: #2b2b2b;
-            color: #e0e0e0;
-            font-size: 16px; /* 增加字体大小 */
+        input[type="password"]:focus, select:focus {
+            background-color: #2980b9; /* 聚焦时改变背景颜色 */
         }
 
         button {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #00bfff;
-            color: #121212;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 16px; /* 增加按钮字体大小 */
+            width: 100%; /* 宽度占满父容器 */
+            padding: 10px; /* 设置内边距 */
+            border: none; /* 移除边框 */
+            border-radius: 5px; /* 设置圆角 */
+            color: #ecf0f1; /* 设置文本颜色 */
+            font-weight: bold; /* 设置粗体 */
+            cursor: pointer; /* 设置鼠标指针样式 */
+            transition: background-color 0.3s ease, transform 0.3s ease; /* 添加过渡效果 */
+            font-size: 16px; /* 设置字体大小 */
+            margin-top: 10px; /* 设置顶部外边距 */
         }
 
-        button:hover {
-            background-color: #009acd;
+        button.blue-button {
+            background-color: #2ecc71; /* 设置按钮背景颜色 */
         }
 
-        #menu {
-            display: none;
-            margin-top: 20px;
+        button.blue-button:hover {
+            background-color: #27ae60; /* 鼠标悬停时改变背景颜色 */
+            transform: scale(1.05); /* 缩放效果 */
         }
 
-        #menu button {
-            margin-top: 10px;
+        button.red-button {
+            background-color: #e74c3c; /* 设置按钮背景颜色 */
         }
 
-        /* 添加新样式，设置按钮之间的间隙和颜色区分 */
-        #steps button {
-            margin-top: 10px;
+        button.red-button:hover {
+            background-color: #c0392b; /* 鼠标悬停时改变背景颜色 */
+            transform: scale(1.05); /* 缩放效果 */
         }
 
-        #steps button:nth-child(1) {
-            background-color: #00bfff;
+        #instructionText {
+            color: #ecf0f1; /* 设置文本颜色 */
+            font-size: 18px; /* 设置字体大小 */
+            margin-bottom: 20px; /* 设置底部外边距 */
+            padding: 10px; /* 设置内边距 */
+            background-color: #2980b9; /* 设置背景颜色 */
+            border-radius: 5px; /* 设置圆角 */
         }
 
-        #steps button:nth-child(1):hover {
-            background-color: #009acd;
+        #allSteps {
+            text-align: left; /* 文本左对齐 */
+            list-style-type: decimal; /* 设置列表样式 */
+            padding-left: 20px; /* 设置左边距 */
+            margin-top: 20px; /* 设置顶部外边距 */
         }
 
-        #steps button:nth-child(2) {
-            background-color: #ff6347; /* 使用不同的颜色，这里选择了番茄红 */
+        #allSteps p {
+            margin: 5px 0; /* 设置上下外边距 */
+            background-color: #34495e; /* 设置背景颜色 */
+            padding: 10px; /* 设置内边距 */
+            border-radius: 5px; /* 设置圆角 */
+            margin-bottom: 10px; /* 设置底部外边距 */
+            position: relative; /* 相对定位 */
+            animation: fadeInUp 0.5s ease-in-out; /* 添加动画效果 */
         }
 
-        #steps button:nth-child(2):hover {
-            background-color: #e5543c;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0; /* 初始透明度为0 */
+                transform: translateY(20px); /* 初始位置向下偏移20px */
+            }
+            to {
+                opacity: 1; /* 最终透明度为1 */
+                transform: translateY(0); /* 最终位置回到原点 */
+            }
         }
 
-        /* 添加新样式，让步骤文本左对齐 */
-        #stepText {
-            text-align: left;
+        .step-content {
+            display: flex; /* 使用弹性盒子布局 */
+            flex-direction: column; /* 主轴方向为垂直 */
+            align-items: center; /* 子元素水平居中对齐 */
+        }
+
+        .emoji {
+            font-size: 2em; /* 设置字体大小 */
+            margin-bottom: 10px; /* 设置底部外边距 */
+        }
+
+        .progress-bar {
+            width: 100%; /* 宽度占满父容器 */
+            height: 10px; /* 设置高度 */
+            background-color: #2c3e50; /* 设置背景颜色 */
+            border-radius: 5px; /* 设置圆角 */
+            overflow: hidden; /* 隐藏溢出内容 */
+            margin: 10px 0; /* 设置上下外边距 */
+        }
+
+        .progress {
+            height: 100%; /* 高度占满父容器 */
+            width: 0; /* 初始宽度为0 */
+            background-color: #2ecc71; /* 设置背景颜色 */
+            transition: width 0.5s ease; /* 添加过渡效果 */
         }
     </style>
-
-    <!-- 引入 axios 库 -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- 引入 SweetAlert2 库 -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- 引入axios库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.min.css"> <!-- 引入SweetAlert2样式表 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.32/dist/sweetalert2.all.min.js"></script> <!-- 引入SweetAlert2脚本 -->
 </head>
 <body>
-    <!-- 登录表单 -->
     <div id="loginForm" class="container">
-        <h1>故障排查系统</h1>
-        <label for="password">密码:</label>
-        <input type="password" id="password">
-        <button onclick="login()">登录</button>
+        <h1>故障排查系统</h1> <!-- 标题 -->
+        <label for="password">密码:</label> <!-- 密码标签 -->
+        <input type="password" id="password"> <!-- 密码输入框 -->
+        <button onclick="login()" class="blue-button">登录</button> <!-- 登录按钮 -->
     </div>
-    <!-- 故障排查系统内容，初始隐藏 -->
+
     <div id="troubleshootingSystem" class="container" style="display: none;">
-        <h1>故障排查系统</h1>
-        <p>请选择您遇到的问题类型：</p>
+        <h1>故障排查系统</h1> <!-- 标题 -->
+        <p>请选择您遇到的问题类型：</p> <!-- 提示信息 -->
         <select id="problemType">
-            <option value="powerOn">不开机问题</option>
-            <option value="shortBattery">待机时间短</option>
-            <option value="poorSignal">信号差</option>
-            <option value="stillProblem">维修后仍旧有问题</option>
-            <option value="shuaihuai">屏幕破裂</option>
-            <option value="kadun">手机卡顿</option> 
-            <option value="tingtong">听筒声音小</option>
-            <option value="blindModeExit">盲人模式退出问题</option>
+            <option value="">请选择故障类型</option> <!-- 默认选项 -->
+            <option value="powerOn">不开机问题</option> <!-- 开机问题选项 -->
+            <option value="shortBattery">待机时间短</option> <!-- 待机时间短选项 -->
+            <option value="poorSignal">信号差</option> <!-- 信号差选项 -->
+            <option value="stillProblem">维修后仍旧有问题</option> <!-- 维修后仍有问题选项 -->
+            <option value="shuaihuai">屏幕破裂</option> <!-- 屏幕破裂选项 -->
+            <option value="kadun">手机卡顿</option> <!-- 手机制动选项 -->
+            <option value="tingtong">听筒声音小</option> <!-- 听筒声音小选项 -->
+            <option value="blindModeExit">盲人模式退出问题</option> <!-- 盲人模式退出问题选项 -->
         </select>
-        <button onclick="startTroubleshooting()">开始排查</button>
-        <div id="steps" style="display: none;">
-            <p id="stepText"></p>
-            <button onclick="nextStep()">下一步</button>
-            <button onclick="restartTroubleshooting()">重新选择问题</button>
-        </div>
-        <div id="menu">
-            <button onclick="goBackToInitialPage()">返回主菜单</button>
-            <button onclick="logout()">退出登录</button>
-        </div>
+        <button onclick="startTroubleshooting()" class="blue-button">开始排查</button> <!-- 开始排查按钮 -->
+        <button onclick="logout()" class="red-button">退出登录</button> <!-- 退出登录按钮 -->
     </div>
 
-    <!-- 盲人模式退出引导，初始隐藏 -->
+    <div id="troubleshootingSteps" class="container" style="display: none;">
+        <h1 id="selectedProblemTitle"></h1> <!-- 动态显示选择的问题标题 -->
+        <p id="instructionText">请按照如下步骤进行排查</p> <!-- 提示信息 -->
+        <div id="allSteps"></div> <!-- 步骤列表容器 -->
+        <button onclick="goBackToSecondPage()" class="blue-button">返回主菜单</button> <!-- 返回主菜单按钮 -->
+        <button onclick="logout()" class="red-button">退出登录</button> <!-- 退出登录按钮 -->
+    </div>
+
     <div id="blindModeExitGuide" style="display: none;">
-        <!-- 复制盲人模式退出方法.html 的内容 -->
-        <div id="step1" class="step" style="display: none;">
+        <div id="step1" class="step">
             <div class="step-content">
-                <div class="emoji">👆</div>
-                <h2>尝试通过侧边按键退出盲人模式</h2>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 25%"></div>
-                </div>
-                <button onclick="showConfirm(1)">我已连续点击侧边按键3次</button>
+                <div class="emoji">👆</div> <!-- 表情符号 -->
+                <h2>尝试通过侧边按键退出盲人模式</h2> <!-- 步骤描述 -->
+                <div class="progress-bar"><div class="progress" style="width: 25%"></div></div> <!-- 进度条 -->
+                <button onclick="showConfirm(1)">我已连续点击侧边按键3次</button> <!-- 确认按钮 -->
             </div>
         </div>
 
-        <div id="step2" class="step" style="display: none;">
+        <div id="step2" class="step">
             <div class="step-content">
-                <div class="emoji">📱</div>
-                <h2>检查屏幕亮屏状态及响应</h2>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 50%"></div>
-                </div>
-                <button onclick="checkScreenLit()">我已点击开机键</button>
+                <div class="emoji">📱</div> <!-- 表情符号 -->
+                <h2>检查屏幕亮屏状态及响应</h2> <!-- 步骤描述 -->
+                <div class="progress-bar"><div class="progress" style="width: 50%"></div></div> <!-- 进度条 -->
+                <button onclick="checkScreenLit()">我已点击开机键</button> <!-- 确认按钮 -->
             </div>
         </div>
 
-        <div id="step3" class="step" style="display: none;">
+        <div id="step3" class="step">
             <div class="step-content">
-                <div class="emoji">👂</div>
-                <h2>如果屏幕不亮请执行</h2>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 75%"></div>
-                </div>
+                <div class="emoji">👂</div> <!-- 表情符号 -->
+                <h2>如果屏幕不亮请执行</h2> <!-- 步骤描述 -->
+                <div class="progress-bar"><div class="progress" style="width: 75%"></div></div> <!-- 进度条 -->
                 <div id="promptCheck">
-                    <p class="warning">请持续点击开机键直到听到提示音（如报时或通知内容）</p>
-                    <button onclick="checkPromptSound()">我听到提示音了</button>
+                    <p class="warning">请持续点击开机键直到听到提示音（如报时或通知内容）</p> <!-- 提示信息 -->
+                    <button onclick="checkPromptSound()">我听到提示音了</button> <!-- 确认按钮 -->
                 </div>
                 <div id="unlockGuide" style="display:none;">
-                    <p>请用三指连续敲击屏幕直至屏幕亮起</p>
-                    <button onclick="activateScreen()">屏幕已亮起</button>
+                    <p>请用三指连续敲击屏幕直至屏幕亮起</p> <!-- 提示信息 -->
+                    <button onclick="activateScreen()">屏幕已亮起</button> <!-- 确认按钮 -->
                 </div>
             </div>
         </div>
 
-        <div id="step4" class="step" style="display: none;">
+        <div id="step4" class="step">
             <div class="step-content">
-                <div class="emoji">📞</div>
-                <h2>寻求技术支持</h2>
-                <div class="progress-bar">
-                    <div class="progress" style="width: 100%"></div>
-                </div>
-                <p>建议联系技术支持或专业人员获取帮助，联系方式：[具体联系方式]</p>
-                <button onclick="askRetry()">是否需要再次尝试上述步骤？</button>
+                <div class="emoji">📞</div> <!-- 表情符号 -->
+                <h2>寻求技术支持</h2> <!-- 步骤描述 -->
+                <div class="progress-bar"><div class="progress" style="width: 100%"></div></div> <!-- 进度条 -->
+                <p>建议联系技术支持或专业人员获取帮助，联系方式：[具体联系方式]</p> <!-- 提示信息 -->
+                <button onclick="askRetry()">是否需要再次尝试上述步骤？</button> <!-- 确认按钮 -->
             </div>
         </div>
 
         <div id="resetDiv" style="display: none;">
-            <button onclick="resetProcess()">重新开始</button>
+            <button onclick="resetProcess()">重新开始</button> <!-- 重新开始按钮 -->
         </div>
     </div>
 
     <script>
-        // 硬编码的密码，只能在源代码里修改
-        const HARDCODED_PASSWORD = '8888';
+        const HARDCODED_PASSWORD = '8888'; // 硬编码密码
 
-        // 页面加载时清理历史记录
         window.onload = function() {
-            localStorage.clear();
-            sessionStorage.clear();
-            document.getElementById('password').value = '';
+            localStorage.clear(); // 清空本地存储
+            sessionStorage.clear(); // 清空会话存储
+            document.getElementById('password').value = ''; // 清空密码输入框
         };
 
-        // 登录函数
         function login() {
-            const password = document.getElementById('password').value;
-            // 清空密码输入框，避免旧密码残留
-            document.getElementById('password').value = ''; 
+            const password = document.getElementById('password').value; // 获取密码输入值
+            document.getElementById('password').value = ''; // 清空密码输入框
 
-            if (password === HARDCODED_PASSWORD) {
-                document.getElementById('loginForm').style.display = 'none';
-                document.getElementById('troubleshootingSystem').style.display = 'block';
+            if (password === HARDCODED_PASSWORD) { // 检查密码是否正确
+                toggleDisplay('loginForm', false); // 隐藏登录表单
+                toggleDisplay('troubleshootingSystem', true); // 显示故障排查系统
             } else {
-                alert('密码错误，请重试。');
+                alert('密码错误，请重试。'); // 密码错误提示
             }
         }
 
-        // 退出登录函数
         function logout() {
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('troubleshootingSystem').style.display = 'none';
-            document.getElementById('steps').style.display = 'none';
-            document.getElementById('menu').style.display = 'none';
-            document.getElementById('blindModeExitGuide').style.display = 'none';
+            ['loginForm', 'troubleshootingSystem', 'troubleshootingSteps', 'blindModeExitGuide'].forEach(id => toggleDisplay(id, false)); // 隐藏所有相关容器
             document.getElementById('password').value = ''; // 清空密码输入框
+            toggleDisplay('loginForm', true); // 显示登录表单
         }
 
-        // 初始步骤数组
-        let currentStep = 0;
-        let problemSteps = [];
+        let problemSteps = []; // 初始化问题步骤数组
 
         function startTroubleshooting() {
-            const problemType = document.getElementById('problemType').value;
-            document.getElementById('steps').style.display = 'none';
-            document.getElementById('blindModeExitGuide').style.display = 'none';
-
-            switch (problemType) {
-                case 'powerOn':
-                case 'shortBattery':
-                case 'poorSignal':
-                case 'stillProblem':
-                case 'shuaihuai':
-                    problemSteps = getStepsForProblem(problemType);
-                    currentStep = 0;
-                    showStep();
-                    document.getElementById('steps').style.display = 'block';
-                    document.getElementById('troubleshootingSystem').querySelector('#menu').style.display = 'block';
-                    break;
-                case 'blindModeExit':
-                    document.getElementById('troubleshootingSystem').style.display = 'none';
-                    document.getElementById('blindModeExitGuide').style.display = 'block';
-                    currentStepBlindMode = 1; // 确保每次进入都从第一步开始
-                    showStepBlindMode();
-                    break;
+            const problemType = document.getElementById('problemType').value; // 获取选择的问题类型
+            if (!problemType) { // 如果未选择问题类型
+                alert('请选择一个故障类型'); // 提示选择问题类型
+                return;
             }
+
+            toggleDisplay('troubleshootingSystem', false); // 隐藏故障排查系统
+            toggleDisplay('troubleshootingSteps', true); // 显示排查步骤
+
+            problemSteps = getStepsForProblem(problemType); // 获取对应问题的步骤
+            document.getElementById('selectedProblemTitle').textContent = convertToChinese(problemType); // 设置问题标题
+            document.getElementById('instructionText').textContent = '请按照如下步骤进行排查'; // 设置提示信息
+            document.getElementById('allSteps').innerHTML = problemSteps.map((step, index) => `<p>${index + 1}. ${step}</p>`).join(''); // 显示步骤列表
         }
 
         function getStepsForProblem(problemType) {
-            const STEPS = {
+            return {
                 powerOn: [
                     '确认手机电池是否有电，建议您尝试充电一段时间后再尝试开机。',
                     '请按照您手机机型正确的强制重启步骤操作（不同品牌和型号的手机可能有所不同）。',
@@ -305,275 +310,215 @@
                     '尝试重启手机，有时候简单的重启可以解决问题。',
                     '如果手机进水或受潮，请立即关机并干燥处理，避免进一步损害。',
                     '如果以上步骤都无法解决问题，建议联系专业的维修服务。'
+                ],
+                kadun: [
+                    '清除缓存和数据：进入“设置” > “存储”，清理缓存和数据。',
+                    '卸载最近安装的应用程序：可能是新安装的应用导致性能下降。',
+                    '更新系统：确保您的手机操作系统是最新的版本。',
+                    '重启手机：有时候简单的重启可以解决临时性问题。',
+                    '恢复出厂设置：如果以上步骤无效，您可以考虑恢复出厂设置（请注意备份重要数据）。'
+                ],
+                tingtong: [
+                    '检查耳机：确保耳机连接良好，尝试更换耳机测试。',
+                    '清洁听筒：使用干净的棉签轻轻清洁听筒孔。',
+                    '重启手机：有时候简单的重启可以解决问题。',
+                    '检查通话设置：进入“设置” > “声音”，检查通话音量设置。',
+                    '恢复出厂设置：如果以上步骤无效，您可以考虑恢复出厂设置（请注意备份重要数据）。'
+                ],
+                blindModeExit: [
+                    '尝试通过侧边按键退出盲人模式：连续点击三次侧边按键。',
+                    '检查屏幕亮屏状态及响应：按住电源键看屏幕是否亮起。',
+                    '等待提示音：如果屏幕没亮，继续按住电源键直到听到提示音。',
+                    '滑动解锁：屏幕亮起后，单指滑动进入解锁页面，输入密码时每个数字需要双击。',
+                    '联系技术支持：如果以上步骤都无法解决问题，建议联系技术支持或专业人员获取帮助。'
                 ]
-            };
-            return STEPS[problemType];
+            }[problemType]; // 根据问题类型返回对应的步骤
         }
 
-        function showStep() {
-            const stepText = document.getElementById('stepText');
-            stepText.textContent = `步骤 ${currentStep + 1}: ${problemSteps[currentStep]}`;
-        }
-
-        function nextStep() {
-            if (currentStep < problemSteps.length - 1) {
-                currentStep++;
-                showStep();
-            } else {
-                alert('故障排查已完成。如果问题仍然存在，请联系我们的技术支持团队。');
-                restartTroubleshooting();
+        function convertToChinese(problemType) {
+            switch (problemType) { // 根据问题类型转换为中文标题
+                case 'powerOn': return '不开机问题';
+                case 'shortBattery': return '待机时间短';
+                case 'poorSignal': return '信号差';
+                case 'stillProblem': return '维修后仍旧有问题';
+                case 'shuaihuai': return '屏幕破裂';
+                case 'kadun': return '手机卡顿';
+                case 'tingtong': return '听筒声音小';
+                case 'blindModeExit': return '盲人模式退出问题';
+                default: return '';
             }
         }
 
-        function restartTroubleshooting() {
-            currentStep = 0;
-            problemSteps = [];
-            hideElement('steps');
-            hideElement('menu');
+        function goBackToSecondPage() {
+            ['troubleshootingSteps', 'blindModeExitGuide'].forEach(id => toggleDisplay(id, false)); // 隐藏排查步骤和盲人模式指南
+            document.getElementById('problemType').value = ''; // 复位选择故障类型的下拉菜单
+            toggleDisplay('troubleshootingSystem', true); // 显示故障排查系统
         }
 
-        // 返回用户登录后的最初界面
-        function goBackToInitialPage() {
-            hideElement('steps');
-            hideElement('menu');
-        }
-
-        // 支持使用 Enter 键登录
-        document.getElementById('password').addEventListener('keydown', function (event) {
-            if (event.key === 'Enter') {
-                login();
-            }
+        document.getElementById('password').addEventListener('keydown', event => {
+            if (event.key === 'Enter') login(); // 回车键触发登录函数
         });
 
-        // 盲人模式退出引导相关函数
-        let currentStepBlindMode = 1;
+        let currentStepBlindMode = 1; // 初始化当前步数
 
         async function showConfirm(branch) {
-            try {
-                const { isConfirmed } = await Swal.fire({
-                    title: '是否已退出盲人模式？',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: '是',
-                    cancelButtonText: '否',
-                    width: 600, // 调整弹窗宽度
-                    padding: '3em', // 调整内边距
-                    allowOutsideClick: false // 禁止点击外部关闭弹窗
-                });
-                if (isConfirmed) {
-                    exitFlow();
-                } else {
-                    currentStepBlindMode = getNextStep(branch);
-                    showStepBlindMode();
-                }
-            } catch (error) {
-                console.error('SweetAlert2 出现错误:', error);
-                alert('出现错误，请稍后重试。');
+            const { isConfirmed } = await Swal.fire({ // 显示确认对话框
+                title: '是否已退出盲人模式？',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '是',
+                cancelButtonText: '否',
+                width: 600,
+                padding: '3em',
+                allowOutsideClick: false
+            });
+            if (isConfirmed) exitFlow(); // 用户确认则退出流程
+            else {
+                currentStepBlindMode = getNextStep(branch); // 更新当前步数
+                showStepBlindMode(); // 显示下一步
             }
         }
 
         async function checkScreenLit() {
-            try {
-                const { isConfirmed } = await Swal.fire({
-                    title: '屏幕是否亮起？',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: '是',
-                    cancelButtonText: '否',
-                    width: 600,
-                    padding: '3em',
-                    allowOutsideClick: false
-                });
-                if (isConfirmed) {
-                    await Swal.fire({
-                        title: '请单指滑动进入解锁页面，输入密码时每个数字需要双击',
-                        icon: 'info',
-                        width: 600,
-                        padding: '3em',
-                        allowOutsideClick: false
-                    });
-                    const { isConfirmed: exited } = await Swal.fire({
-                        title: '是否已退出盲人模式？',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: '是',
-                        cancelButtonText: '否',
-                        width: 600,
-                        padding: '3em',
-                        allowOutsideClick: false
-                    });
-                    if (exited) {
-                        exitFlow();
-                    } else {
-                        currentStepBlindMode = 1;
-                        showStepBlindMode();
-                    }
-                } else {
-                    currentStepBlindMode = 3;
-                    showStepBlindMode();
-                }
-            } catch (error) {
-                console.error('SweetAlert2 出现错误:', error);
-                alert('出现错误，请稍后重试。');
-            }
-        }
-
-        function checkPromptSound() {
-            hideElement('promptCheck');
-            showElement('unlockGuide');
-        }
-
-        async function activateScreen() {
-            try {
-                await Swal.fire({
-                    title: '屏幕已亮起，请单指滑动进入解锁页面，输入密码时每个数字需要双击',
+            const { isConfirmed } = await Swal.fire({ // 显示确认对话框
+                title: '屏幕是否亮起？',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '是',
+                cancelButtonText: '否',
+                width: 600,
+                padding: '3em',
+                allowOutsideClick: false
+            });
+            if (isConfirmed) {
+                Swal.fire({
+                    title: '请单指滑动进入解锁页面，输入密码时每个数字需要双击',
                     icon: 'info',
                     width: 600,
                     padding: '3em',
                     allowOutsideClick: false
-                });
-                const { isConfirmed: exited } = await Swal.fire({
-                    title: '是否已退出盲人模式？',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: '是',
-                    cancelButtonText: '否',
-                    width: 600,
-                    padding: '3em',
-                    allowOutsideClick: false
-                });
-                if (exited) {
-                    exitFlow();
-                } else {
-                    currentStepBlindMode = 3;
-                    showStepBlindMode();
-                    showElement('promptCheck');
-                    hideElement('unlockGuide');
+                }); // 显示提示信息
+                const exited = await showConfirm(); // 再次显示确认对话框
+                if (!exited) {
+                    currentStepBlindMode = 1; // 重置当前步数
+                    showStepBlindMode(); // 显示第一步
                 }
-            } catch (error) {
-                console.error('SweetAlert2 出现错误:', error);
-                alert('出现错误，请稍后重试。');
+            } else {
+                currentStepBlindMode = 3; // 更新当前步数
+                showStepBlindMode(); // 显示第三步
+            }
+        }
+
+        function checkPromptSound() {
+            hideElement('promptCheck'); // 隐藏提示信息
+            showElement('unlockGuide'); // 显示解锁引导
+        }
+
+        async function activateScreen() {
+            Swal.fire({
+                title: '屏幕已亮起，请单指滑动进入解锁页面，输入密码时每个数字需要双击',
+                icon: 'info',
+                width: 600,
+                padding: '3em',
+                allowOutsideClick: false
+            }); // 显示提示信息
+            const exited = await showConfirm(); // 显示确认对话框
+            if (!exited) {
+                currentStepBlindMode = 3; // 更新当前步数
+                showStepBlindMode(); // 显示第三步
+                showElement('promptCheck'); // 显示提示信息
+                hideElement('unlockGuide'); // 隐藏解锁引导
             }
         }
 
         async function askRetry() {
-            try {
-                const { isConfirmed } = await Swal.fire({
-                    title: '是否需要再次尝试上述步骤？',
-                    icon: 'question',
-                    showCancelButton: true,
-                    confirmButtonText: '是',
-                    cancelButtonText: '否',
-                    width: 600,
-                    padding: '3em',
-                    allowOutsideClick: false
-                });
-                if (isConfirmed) {
-                    currentStepBlindMode = 1;
-                    showStepBlindMode();
-                } else {
-                    exitFlow();
-                }
-            } catch (error) {
-                console.error('SweetAlert2 出现错误:', error);
-                alert('出现错误，请稍后重试。');
-            }
+            const { isConfirmed } = await Swal.fire({ // 显示确认对话框
+                title: '是否需要再次尝试上述步骤？',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '是',
+                cancelButtonText: '否',
+                width: 600,
+                padding: '3em',
+                allowOutsideClick: false
+            });
+            if (isConfirmed) {
+                currentStepBlindMode = 1; // 重置当前步数
+                showStepBlindMode(); // 显示第一步
+            } else exitFlow(); // 用户取消则退出流程
         }
 
-        // 在showStep函数中添加进度条更新
-        function showStepBlindMode(stepNumber) {
-            if (!stepNumber) {
-                stepNumber = currentStepBlindMode;
-            }
-            const steps = document.querySelectorAll('#blindModeExitGuide .step');
-            hideElements(steps);
-            const step = document.getElementById(`step${stepNumber}`);
-            showElement(step);
-
-            // 更新进度条
-            const progress = step.querySelector('.progress');
-            progress.style.width = `${stepNumber * 25}%`;
+        function showStepBlindMode(stepNumber = currentStepBlindMode) {
+            const steps = document.querySelectorAll('#blindModeExitGuide .step'); // 获取所有步骤
+            hideElements(steps); // 隐藏所有步骤
+            const step = document.getElementById(`step${stepNumber}`); // 获取当前步骤
+            showElement(step); // 显示当前步骤
+            const progress = step.querySelector('.progress'); // 获取进度条
+            progress.style.width = `${stepNumber * 25}%`; // 设置进度条宽度
         }
 
         function exitFlow() {
-            try {
-                Swal.fire({
-                    title: '操作完成！如问题仍未解决，请保持与技术支持的联系',
-                    icon: 'success',
-                    showCancelButton: true,
-                    confirmButtonText: '重新开始',
-                    cancelButtonText: '回到主菜单',
-                    width: 600,
-                    padding: '3em',
-                    allowOutsideClick: false
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        resetProcess();
-                    } else {
-                        goBackToTroubleshooting();
-                    }
-                });
-                const steps = document.querySelectorAll('#blindModeExitGuide .step');
-                hideElements(steps);
-                hideElement('resetDiv');
-            } catch (error) {
-                console.error('SweetAlert2 出现错误:', error);
-                alert('出现错误，请稍后重试。');
-            }
+            Swal.fire({
+                title: '操作完成！如问题仍未解决，请保持与技术支持的联系',
+                icon: 'success',
+                showCancelButton: true,
+                confirmButtonText: '重新开始',
+                cancelButtonText: '回到主菜单',
+                width: 600,
+                padding: '3em',
+                allowOutsideClick: false
+            }).then(result => {
+                if (result.isConfirmed) resetProcess(); // 用户确认则重新开始
+                else goBackToTroubleshooting(); // 用户取消则返回故障排查系统
+            });
+            const steps = document.querySelectorAll('#blindModeExitGuide .step'); // 获取所有步骤
+            hideElements(steps); // 隐藏所有步骤
+            hideElement('resetDiv'); // 隐藏重置按钮
         }
 
         function goBackToTroubleshooting() {
-            hideElement('blindModeExitGuide');
-            showElement('troubleshootingSystem');
+            toggleDisplay('blindModeExitGuide', false); // 隐藏盲人模式指南
+            toggleDisplay('troubleshootingSystem', true); // 显示故障排查系统
         }
 
         function resetProcess() {
-            currentStepBlindMode = 1;
-            const steps = document.querySelectorAll('#blindModeExitGuide .step');
-            hideElements(steps);
-            showElement('step1');
-            showElement('promptCheck');
-            hideElement('unlockGuide');
-            hideElement('resetDiv');
+            currentStepBlindMode = 1; // 重置当前步数
+            const steps = document.querySelectorAll('#blindModeExitGuide .step'); // 获取所有步骤
+            hideElements(steps); // 隐藏所有步骤
+            showElement('step1'); // 显示第一步
+            showElement('promptCheck'); // 显示提示信息
+            hideElement('unlockGuide'); // 隐藏解锁引导
+            hideElement('resetDiv'); // 隐藏重置按钮
         }
 
-        // 辅助函数：隐藏元素
+        function toggleDisplay(elementId, display) {
+            document.getElementById(elementId).style.display = display ? 'block' : 'none'; // 根据参数显示或隐藏元素
+        }
+
         function hideElement(elementIdOrElement) {
-            const element = typeof elementIdOrElement === 'string' ? document.getElementById(elementIdOrElement) : elementIdOrElement;
-            if (element) {
-                element.style.display = 'none';
-            }
+            const element = typeof elementIdOrElement === 'string' ? document.getElementById(elementIdOrElement) : elementIdOrElement; // 获取元素
+            if (element) element.style.display = 'none'; // 隐藏元素
         }
 
-        // 辅助函数：显示元素
         function showElement(elementIdOrElement) {
-            const element = typeof elementIdOrElement === 'string' ? document.getElementById(elementIdOrElement) : elementIdOrElement;
-            if (element) {
-                element.style.display = 'block';
-            }
+            const element = typeof elementIdOrElement === 'string' ? document.getElementById(elementIdOrElement) : elementIdOrElement; // 获取元素
+            if (element) element.style.display = 'block'; // 显示元素
         }
 
-        // 辅助函数：隐藏多个元素
         function hideElements(elements) {
-            elements.forEach(element => {
-                element.style.display = 'none';
-            });
+            elements.forEach(hideElement); // 遍历元素并隐藏
         }
 
-        // 辅助函数：获取下一步步骤
         function getNextStep(branch) {
-            switch(branch) {
-                case 1:
-                    return 2;
-                case 2:
-                    return 3;
-                case 3:
-                    return 4;
-                default:
-                    return 1;
-            }
+            return ({
+                1: 2,
+                2: 3,
+                3: 4
+            })[branch] || 1; // 根据分支返回下一步，如果没有匹配则返回第一步
         }
     </script>
 </body>
-<div style="position: fixed; bottom: 10px; right: 10px; color: #e0e0e0;">作者：康鹏飞</div>
+<div style="position: fixed; bottom: 10px; right: 10px; color: #ecf0f1;">作者：康鹏飞</div> <!-- 作者署名 -->
 </html>
+
+
