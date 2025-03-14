@@ -66,11 +66,11 @@
         }
 
         button.blue-button {
-            background-color: #2ecc71; /* 设置按钮背景颜色 */
+            background-color: #3498db; /* 设置按钮背景颜色 */
         }
 
         button.blue-button:hover {
-            background-color: #27ae60; /* 鼠标悬停时改变背景颜色 */
+            background-color: #2980b9; /* 鼠标悬停时改变背景颜色 */
             transform: scale(1.05); /* 缩放效果 */
         }
 
@@ -84,12 +84,17 @@
         }
 
         #instructionText {
-            color: #ecf0f1; /* 设置文本颜色 */
-            font-size: 18px; /* 设置字体大小 */
+            color: black; /* 设置文本颜色为黑色 */
+            font-size: 14px; /* 设置字体大小 */
+            font-weight: bold; /* 设置粗体 */
             margin-bottom: 20px; /* 设置底部外边距 */
             padding: 10px; /* 设置内边距 */
-            background-color: #2980b9; /* 设置背景颜色 */
+            background-color: #d3d3d3; /* 设置背景颜色 */
             border-radius: 5px; /* 设置圆角 */
+            text-align: center; /* 文本居中对齐 */
+            width: calc(100% + 20px); /* 延伸到两端 */
+            margin-left: -10px;
+            box-sizing: border-box;
         }
 
         #allSteps {
@@ -143,8 +148,20 @@
         .progress {
             height: 100%; /* 高度占满父容器 */
             width: 0; /* 初始宽度为0 */
-            background-color: #2ecc71; /* 设置背景颜色 */
+            background-color: #3498db; /* 设置背景颜色 */
             transition: width 0.5s ease; /* 添加过渡效果 */
+        }
+
+        .dynamic-title {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .dynamic-title h1 {
+            margin: 0; /* 移除默认外边距 */
+            color: #3498db; /* 设置字体颜色为开始排查按钮的颜色 */
         }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script> <!-- 引入axios库 -->
@@ -157,6 +174,7 @@
         <label for="password">密码:</label> <!-- 密码标签 -->
         <input type="password" id="password"> <!-- 密码输入框 -->
         <button onclick="login()" class="blue-button">登录</button> <!-- 登录按钮 -->
+        <div style="position: fixed; bottom: 10px; right: 10px; color: #ecf0f1;">作者：康鹏飞</div> <!-- 作者署名 -->
     </div>
 
     <div id="troubleshootingSystem" class="container" style="display: none;">
@@ -178,8 +196,10 @@
     </div>
 
     <div id="troubleshootingSteps" class="container" style="display: none;">
-        <h1 id="selectedProblemTitle"></h1> <!-- 动态显示选择的问题标题 -->
-        <p id="instructionText">请按照如下步骤进行排查</p> <!-- 提示信息 -->
+        <div id="selectedProblemTitle" class="dynamic-title">
+            <h1></h1> <!-- 动态显示选择的问题标题 -->
+        </div>
+        <p id="instructionText">请仔细阅读以下步骤以解决您的问题</p> <!-- 提示信息 -->
         <div id="allSteps"></div> <!-- 步骤列表容器 -->
         <button onclick="goBackToSecondPage()" class="blue-button">返回主菜单</button> <!-- 返回主菜单按钮 -->
         <button onclick="logout()" class="red-button">退出登录</button> <!-- 退出登录按钮 -->
@@ -275,8 +295,8 @@
             toggleDisplay('troubleshootingSteps', true); // 显示排查步骤
 
             problemSteps = getStepsForProblem(problemType); // 获取对应问题的步骤
-            document.getElementById('selectedProblemTitle').textContent = convertToChinese(problemType); // 设置问题标题
-            document.getElementById('instructionText').textContent = '请按照如下步骤进行排查'; // 设置提示信息
+            document.getElementById('selectedProblemTitle').querySelector('h1').textContent = convertToChinese(problemType); // 设置问题标题
+            document.getElementById('instructionText').textContent = '请仔细阅读以下步骤以解决您的问题'; // 设置提示信息
             document.getElementById('allSteps').innerHTML = problemSteps.map((step, index) => `<p>${index + 1}. ${step}</p>`).join(''); // 显示步骤列表
         }
 
@@ -337,14 +357,14 @@
 
         function convertToChinese(problemType) {
             switch (problemType) { // 根据问题类型转换为中文标题
-                case 'powerOn': return '不开机问题';
-                case 'shortBattery': return '待机时间短';
-                case 'poorSignal': return '信号差';
-                case 'stillProblem': return '维修后仍旧有问题';
-                case 'shuaihuai': return '屏幕破裂';
-                case 'kadun': return '手机卡顿';
+                case 'powerOn': return '手机无法开机';
+                case 'shortBattery': return '待机时间过短';
+                case 'poorSignal': return '信号强度弱';
+                case 'stillProblem': return '维修后仍存在问题';
+                case 'shuaihuai': return '屏幕破损';
+                case 'kadun': return '手机运行缓慢';
                 case 'tingtong': return '听筒声音小';
-                case 'blindModeExit': return '盲人模式退出问题';
+                case 'blindModeExit': return '退出盲人模式问题';
                 default: return '';
             }
         }
@@ -518,7 +538,7 @@
         }
     </script>
 </body>
-<div style="position: fixed; bottom: 10px; right: 10px; color: #ecf0f1;">作者：康鹏飞</div> <!-- 作者署名 -->
 </html>
+
 
 
